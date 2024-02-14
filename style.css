@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Teko:wght@300..700&display=swap');
+
 :root {
   --columns: 25;
   --rows: 35;
@@ -19,15 +21,19 @@ main {
 .wrapper {
   align-items: center;
   display: grid;
-  height: calc(30.625rem + 1px * var(--rows) - 1px);
+  border-left: 8px solid #0084ff;
+  border-top: 8px solid #0c8aff;
+  box-shadow: 12px 12px 0 4px #ff0c86;
+  width: calc(0.875rem * var(--columns) + 32px);
+  height: calc(0.875rem * var(--rows) + 34px);
+  border-bottom-right-radius: 1px;
   justify-content: center;
   position: relative;
-  width: calc(21.875rem + 1px * var(--columns) - 1px);
 }
 
 .score {
   color: #ffffff;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: Teko, sans-serif;
   font-weight: 200;
   text-align: center;
 }
@@ -35,15 +41,19 @@ main {
 .gameboard {
   --bg-color: #141b2b;
   background-color: var(--bg-color);
-  border-radius: 4px;
+  border-left: 12px solid #1e3158;
+  border-top: 12px solid #273554;
+  border-bottom: 6px solid #ff369b61;
+  border-right: 6px solid #ff369b61;
   display: grid;
-  height: calc(30.625rem + 1px * var(--rows) - 1px);
+  height: calc(0.875rem * var(--rows));
   gap: 1px;
   grid-template-columns: repeat(var(--columns), 1fr);
   grid-template-rows: repeat(var(--rows), 1fr);
   overflow: hidden;
+  padding: 8px;
   position: relative;
-  width: calc(21.875rem + 1px * var(--columns) - 1px);
+  width: calc(0.875rem * var(--columns));
 }
 
 .overlay {
@@ -53,7 +63,9 @@ main {
   display: grid;
   height: 100%;
   justify-content: center;
+  left: 0;
   position: absolute;
+  top: 0;
   width: 100%;
   z-index: 2;
 }
@@ -112,7 +124,7 @@ main {
   }
 
   50% {
-    box-shadow: 0 0 24px 6px #0c8affa3;
+    box-shadow: 0 0 24px 4px #0c8aff8c;
     transform: rotate(360deg);
   }
 
