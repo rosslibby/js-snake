@@ -8,176 +8,99 @@ const INITIAL_PLAYER = [
   Math.floor(ROWS / 2) * COLUMNS - Math.ceil(COLUMNS / 2),   // midpoint
   (Math.floor(ROWS / 2) * COLUMNS - Math.ceil(COLUMNS / 2)) + COLUMNS,   // tail
 ]
-// const INITIAL_PLAYER = [Math.floor(CELLS / 2) - COLUMNS, Math.floor(CELLS / 2), Math.floor(CELLS / 2) + COLUMNS]
-const config = {
-  leftWall: true,
-  rightWall: true,
-  topWall: true,
-  bottomWall: true,
-}
-let paused = false
+const CONTAINER = document.getElementById('game')
+const ROOT = document.querySelector(':root')
+const PAUSE = document.getElementById('pause-button')
+const START = document.getElementById('start-button')
+const OVERLAY = document.getElementById('overlay')
+const SCORE = document.getElementById('score')
 const player = []
-let lost = false
+const state = {
+  lost: false,
+  paused: false,
+  timer: null,
+  running: false,
+  last: player[player.length - 1],
+  score: 0,
+  piece: 0,
+  direction: INITIAL_DIRECTION,
+}
 const keystrokes = []
-let timer = null
-let running = false
-let last = player[player.length - 1]
-let score = 0
-let piece = 0
 const grid = Array(CELLS).fill(0)
-let direction = INITIAL_DIRECTION
 
 const placePiece = () => {
   const random = Math.floor((Math.random() * CELLS))
   if (player.includes(random)) {
     return placePiece()
   } else {
-    piece = random
+    state.piece = random
   }
 }
 
 const draw = () => {
-  const container = document.getElementById('game')
-  if (running) {
-    Array.from(container.querySelectorAll('.cell')).forEach(cell => {
+  if (state.running) {
+    Array.from(CONTAINER.querySelectorAll('.cell')).forEach(cell => {
       const id = Number(cell.id)
 
-      if (player.includes(id) && !cell.classList.contains('player')) {
-        cell.classList.add('player')
-      } else if (!player.includes(id) && cell.classList.contains('player')) {
-        cell.classList.remove('player')
-      } else if (id === piece && !cell.classList.contains('piece')) {
-        cell.classList.add('piece')
-      } else if (id !== piece && cell.classList.contains('piece')) {
-        cell.classList.remove('piece')
-      }
+      cell.classList.toggle('player', player.includes(id))
+      cell.classList.toggle('piece', id === state.piece)
     })
   } else {
-    container.innerHTML = ''
+    CONTAINER.innerHTML = ''
     grid.forEach((item, idx) => {
       const el = document.createElement('div')
       el.id = idx
       el.classList.add('cell')
-      if (player.includes(idx)) {
-        el.classList.add('player')
-      } else if (idx === piece) {
-        el.classList.add('piece')
-      }
-      container.appendChild(el)
+      el.classList.toggle('player', player.includes(idx))
+      el.classList.toggle('piece', idx === state.piece)
+      CONTAINER.appendChild(el)
     })
   }
 }
 
-const moveUp = () => {
-  const head = player[0]
-  const move = () => {
-    last = player.pop()
-    const nextPos = head - COLUMNS
-
-    collisions(nextPos)
-    if (player.includes(nextPos)) {
-      endGame()
-    } else {
-      player.unshift(nextPos)
-    }
+const nextIndex = (head) => {
+  const dirIndices = {
+    up: head - COLUMNS,
+    down: head + COLUMNS,
+    left: head - 1,
+    right: head + 1,
   }
 
-  if (config.topWall) {
-    if (head > COLUMNS - 1) {
-      move()
-    } else {
-      endGame()
-    }
-  } else {
-    move()
-  }
+  return dirIndices[state.direction]
 }
 
-const moveDown = () => {
-  const head = player[0]
-  const move = () => {
-    last = player.pop()
-    const nextPos = head + COLUMNS
-
-    collisions(nextPos)
-    if (player.includes(nextPos)) {
-      endGame()
-    } else {
-      player.unshift(nextPos)
-    }
+const viability = (head, index) => {
+  const viabilityIndices = {
+    up: head > COLUMNS - 1 && !player.includes(index),
+    down: head < CELLS - COLUMNS && !player.includes(index),
+    left: head % COLUMNS > 0 && !player.includes(index),
+    right: head % COLUMNS < COLUMNS - 1 && !player.includes(index),
   }
 
-  if (config.bottomWall) {
-    if (head < CELLS - COLUMNS) {
-      move()
-    } else {
-      endGame()
-    }
-  } else {
-    move()
-  }
+  return viabilityIndices[state.direction]
 }
 
-const moveLeft = () => {
+const move = () => {
   const head = player[0]
-  const move = () => {
-    last = player.pop()
-    const nextPos = head - 1
+  const index = nextIndex(head)
+  const viable = viability(head, index)
 
-    collisions(nextPos)
-    if (player.includes(nextPos)) {
-      endGame()
-    } else {
-      player.unshift(nextPos)
-    }
-  }
-  if (config.leftWall) {
-    if (head % COLUMNS > 0) {
-      move()
-    } else {
-      endGame()
-    }
+  if (viable) {
+    player.pop()
+    detectCollision(index)
+    player.unshift(index)
   } else {
-    move()
+    endGame()
   }
-}
-
-const moveRight = () => {
-  const head = player[0]
-  const move = () => {
-    last = player.pop()
-    const nextPos = head + 1
-
-    collisions(nextPos)
-    if (player.includes(nextPos)) {
-      endGame()
-    } else {
-      player.unshift(nextPos)
-    }
-  }
-  if (config.rightWall) {
-    if (head % COLUMNS < COLUMNS - 1) {
-      move()
-    } else {
-      endGame()
-    }
-  } else {
-    move()
-  }
-}
-
-const directions = {
-  left: () => moveLeft(),
-  right: () => moveRight(),
-  up: () => moveUp(),
-  down: () => moveDown(),
 }
 
 document.addEventListener('keydown', e => {
-  if (!running) {
+  if (!state.running) {
     console.log(e.key)
-    if (paused && ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)) {
+    if (state.paused && ['Enter', ' '].includes(e.key)) {
       startGame()
+    } else if (['Enter', ' '].includes(e.key)) {
+      init()
     }
 
     return
@@ -190,10 +113,10 @@ document.addEventListener('keydown', e => {
   const keyDir = e.key.substring(5).toLowerCase()
 
   if (
-    (['up', 'down'].includes(keyDir) && !['up', 'down'].includes(direction))
-    || (['left', 'right'].includes(keyDir) && !['left', 'right'].includes(direction))
+    (['up', 'down'].includes(keyDir) && !['up', 'down'].includes(state.direction))
+    || (['left', 'right'].includes(keyDir) && !['left', 'right'].includes(state.direction))
   ) {
-    if (!running) {
+    if (!state.running) {
       startGame()
     }
 
@@ -204,85 +127,89 @@ document.addEventListener('keydown', e => {
     if (lastKeystrokeMs) {
       if (keystrokeMs - lastKeystrokeMs < MS) {
         setTimeout(() => {
-          direction = keyDir
+          state.direction = keyDir
         }, MS - (keystrokeMs - lastKeystrokeMs))
       } else {
-        direction = keyDir
+        state.direction = keyDir
       }
     } else {
-      direction = keyDir
+      state.direction = keyDir
     }
   }
 })
 
-function collisions(head) {
-  if (
-    (direction === 'up' && head < 0)
-    || (direction === 'down' && head > CELLS - 1)
-    || (direction === 'left' && head % COLUMNS < 0)
-    || (direction === 'right' && head % COLUMNS === COLUMNS)
-  ) {
+function detectCollision(head) {
+  const collision = {
+    up: head < 0,
+    down: head > CELLS - 1,
+    left: head % COLUMNS < 0,
+    right: head % COLUMNS === COLUMNS,
+  }
+
+  if (collision[state.direction]) {
     endGame()
-  } else if (head === piece) {
-    player.push(last)
-    score += 10
-    document.getElementById('score').innerText = score
+  } else if (head === state.piece) {
+    player.push(state.last)
+    state.score += 10
+    SCORE.innerText = state.score
     placePiece()
   }
 }
 
-const move = () => {
-  directions[direction]()
+const toggleOverlay = () => {
+  OVERLAY.classList.toggle('hidden', state.running)
+}
+
+const toggleButtons = () => {
+  PAUSE.classList.toggle('hidden', !state.running)
+  START.classList.toggle('hidden', state.running)
 }
 
 function pauseGame() {
-  paused = true
+  state.paused = true
+  state.running = false
+  toggleOverlay()
   document.getElementById('overlay').classList.toggle('overlay--hidden')
   document.getElementById('pause-button').innerText = 'Resume game'
-  running = false
-  clearInterval(timer)
+  clearInterval(state.timer)
 }
 
 function startGame() {
-  running = true
+  state.running = true
+  PAUSE.innerText = 'Pause game'
 
-  document.getElementById('pause-button').classList.remove('hidden')
-  document.getElementById('pause-button').innerText = 'Pause game'
-  document.getElementById('start-button').classList.add('hidden')
-  document.getElementById('overlay').classList.toggle('overlay--hidden')
+  toggleOverlay()
+  toggleButtons()
 
-  timer = setInterval(() => {
+  state.timer = setInterval(() => {
     move()
     draw()
   }, MS)
 }
 
 function endGame() {
-  document.getElementById('pause-button').classList.add('hidden')
-  document.getElementById('start-button').classList.remove('hidden')
-  document.getElementById('overlay').classList.toggle('overlay--hidden')
+  state.running = false
+  state.lost = true
 
-  lost = true
-  running = false
-  clearInterval(timer)
+  toggleButtons()
+  toggleOverlay()
+
+  clearInterval(state.timer)
   console.log('game over')
-  document.getElementById('start-button').innerText = 'Play again'
-}
-
-const setupGrid = (rows = ROWS, columns = COLUMNS) => {
-  const r = document.querySelector(':root')
-  r.style.setProperty('--columns', columns)
-  r.style.setProperty('--rows', rows)
+  START.innerText = 'Play again'
 }
 
 function init() {
-  setupGrid()
+  ROOT.style.setProperty('--columns', COLUMNS)
+  ROOT.style.setProperty('--rows', ROWS)
+
   while(player.length) {
     player.pop()
   }
+
   INITIAL_PLAYER.forEach(item => player.push(item))
   grid.fill(0)
-  direction = INITIAL_DIRECTION
+  state.direction = INITIAL_DIRECTION
   placePiece()
   draw()
 
@@ -291,7 +218,7 @@ function init() {
 
 document.getElementById('start-button').onclick = () => init()
 document.getElementById('pause-button').onclick = (e) => {
-  if (running) {
+  if (state.running) {
     pauseGame()
   } else {
     startGame()

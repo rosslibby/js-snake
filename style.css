@@ -58,10 +58,6 @@ main {
   z-index: 2;
 }
 
-.overlay--hidden {
-  display: none;
-}
-
 .button {
   background-color: transparent;
   border: 4px solid #0a8aff;
