@@ -1,0 +1,127 @@
+:root {
+  --columns: 25;
+  --rows: 35;
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  align-items: center;
+  background-color: black;
+  display: grid;
+  height: 100vh;
+  justify-content: center;
+  width: 100vw;
+}
+
+.wrapper {
+  align-items: center;
+  display: grid;
+  height: calc(30.625rem + 1px * var(--rows) - 1px);
+  justify-content: center;
+  position: relative;
+  width: calc(21.875rem + 1px * var(--columns) - 1px);
+}
+
+.score {
+  color: #ffffff;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-weight: 200;
+  text-align: center;
+}
+
+.gameboard {
+  --bg-color: #141b2b;
+  background-color: var(--bg-color);
+  border-radius: 4px;
+  display: grid;
+  height: calc(30.625rem + 1px * var(--rows) - 1px);
+  gap: 1px;
+  grid-template-columns: repeat(var(--columns), 1fr);
+  grid-template-rows: repeat(var(--rows), 1fr);
+  overflow: hidden;
+  position: relative;
+  width: calc(21.875rem + 1px * var(--columns) - 1px);
+}
+
+.overlay {
+  align-items: center;
+  backdrop-filter: blur(1.5px);
+  background-color: rgba(0, 0, 0, .7);
+  display: grid;
+  height: 100%;
+  justify-content: center;
+  position: absolute;
+  width: 100%;
+  z-index: 2;
+}
+
+.overlay--hidden {
+  display: none;
+}
+
+.button {
+  background-color: transparent;
+  border: 4px solid #0a8aff;
+  color: #0a8aff;
+  font-size: 1.25rem;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-weight: 900;
+  padding: 14px 18px;
+  text-transform: uppercase;
+  transition: all .15s ease;
+}
+
+.button:hover {
+  box-shadow: 7px 7px 0 0px #0c8aff;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  cursor: pointer;
+  transform: translate(-2px, -8px);
+}
+
+.cell {
+  background-color: var(--bg-color);
+  border-radius: 1px;
+  height: 100%;
+  width: 100%;
+}
+
+.piece {
+  animation-name: piece-pulse;
+  animation-duration: 2.5s;
+  animation-iteration-count: infinite;
+  background-color: #0a8aff;
+  z-index: 1;
+}
+
+.player {
+  background-color: #94ccff;
+}
+
+.hidden {
+  display: none;
+}
+
+@keyframes piece-pulse {
+  0% {
+    box-shadow: 0 0 1px 0 #0c8aff5a;
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(360deg);
+  }
+
+  50% {
+    box-shadow: 0 0 24px 6px #0c8affa3;
+    transform: rotate(360deg);
+  }
+
+  100% {
+    box-shadow: 0 0 1px 0 #0c8aff5a;
+    transform: rotate(360deg);
+  }
+}
