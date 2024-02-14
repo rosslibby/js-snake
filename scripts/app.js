@@ -1,6 +1,6 @@
 const MS = 125
 const INITIAL_DIRECTION = 'up'
-const COLUMNS = 25
+const COLUMNS = 35
 const ROWS = 35
 const CELLS = COLUMNS * ROWS
 const INITIAL_PLAYER = [
@@ -200,9 +200,6 @@ function endGame() {
 }
 
 function init() {
-  ROOT.style.setProperty('--columns', COLUMNS)
-  ROOT.style.setProperty('--rows', ROWS)
-
   while(player.length) {
     player.pop()
   }
@@ -223,4 +220,9 @@ document.getElementById('pause-button').onclick = (e) => {
   } else {
     startGame()
   }
+}
+
+document.body.onload = () => {
+  ROOT.style.setProperty('--columns', COLUMNS)
+  ROOT.style.setProperty('--rows', ROWS)
 }
