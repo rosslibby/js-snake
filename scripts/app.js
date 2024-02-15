@@ -44,16 +44,31 @@ const draw = () => {
 
       cell.classList.toggle('player', player.includes(id))
       cell.classList.toggle('piece', id === state.piece)
+      cell.classList.toggle('block-outer', id === state.piece)
+      if (id === state.piece && !cell.querySelector('.block-inner')) {
+        const inner = document.createElement('div')
+        inner.classList.add('block-inner')
+        cell.appendChild(inner)
+      }
+      if (id !== state.piece && cell.querySelector('.block-inner')) {
+        cell.removeChild(cell.querySelector('.block-inner'))
+      }
     })
   } else {
     CONTAINER.innerHTML = ''
     grid.forEach((item, idx) => {
-      const el = document.createElement('div')
-      el.id = idx
-      el.classList.add('cell')
-      el.classList.toggle('player', player.includes(idx))
-      el.classList.toggle('piece', idx === state.piece)
-      CONTAINER.appendChild(el)
+      const outer = document.createElement('div')
+      outer.id = idx
+      outer.classList.add('cell')
+      outer.classList.toggle('block-outer', idx === state.piece)
+      outer.classList.toggle('player', player.includes(idx))
+      outer.classList.toggle('piece', idx === state.piece)
+      if (idx === state.piece) {
+        const inner = document.createElement('div')
+        inner.classList.add('block-inner')
+        outer.appendChild(inner)
+      }
+      CONTAINER.appendChild(outer)
     })
   }
 }

@@ -13,8 +13,11 @@ main {
   align-items: center;
   background-color: black;
   display: grid;
-  height: 100vh;
+  gap: 2rem;
+  grid-template-rows: 4rem 35rem;
+  height: calc(100vh - 4rem);
   justify-content: center;
+  padding-top: 4rem;
   width: 100vw;
 }
 
@@ -24,8 +27,8 @@ main {
   border-left: 8px solid #0084ff;
   border-top: 8px solid #0c8aff;
   box-shadow: 12px 12px 0 4px #ff0c86;
-  width: calc(0.875rem * var(--columns) + 32px);
-  height: calc(0.875rem * var(--rows) + 34px);
+  width: calc(1.25rem * var(--columns) + 32px);
+  height: calc(1.25rem * var(--rows) + 34px);
   border-bottom-right-radius: 1px;
   justify-content: center;
   position: relative;
@@ -46,14 +49,14 @@ main {
   border-bottom: 6px solid #ff369b61;
   border-right: 6px solid #ff369b61;
   display: grid;
-  height: calc(0.875rem * var(--rows));
+  height: calc(1.25rem * var(--rows));
   gap: 1px;
   grid-template-columns: repeat(var(--columns), 1fr);
   grid-template-rows: repeat(var(--rows), 1fr);
   overflow: hidden;
   padding: 8px;
   position: relative;
-  width: calc(0.875rem * var(--columns));
+  width: calc(1.25rem * var(--columns));
 }
 
 .overlay {
@@ -74,10 +77,12 @@ main {
   background-color: transparent;
   border: 4px solid #0a8aff;
   color: #0a8aff;
-  font-size: 1.25rem;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 1.4rem;
+  font-family: Teko, sans-serif;
   font-weight: 900;
-  padding: 14px 18px;
+  line-height: 1.25rem;
+  padding: 0.875rem 1.125rem;
+  padding-top: 1rem;
   text-transform: uppercase;
   transition: all .15s ease;
 }
@@ -99,7 +104,7 @@ main {
 
 .piece {
   animation-name: piece-pulse;
-  animation-duration: 2.5s;
+  animation-duration: 7s;
   animation-iteration-count: infinite;
   background-color: #0a8aff;
   z-index: 1;
@@ -119,13 +124,29 @@ main {
     transform: rotate(0deg);
   }
 
-  25% {
+  10% {
     transform: rotate(360deg);
   }
 
-  50% {
+  20% {
     box-shadow: 0 0 24px 4px #0c8aff8c;
     transform: rotate(360deg);
+  }
+
+  30% {
+    transform: rotate(360deg);
+  }
+
+  40% {
+    box-shadow: 0 0 1px 0 #0c8aff5a;
+  }
+
+  60% {
+    box-shadow: 0 0 24px 4px #0c8aff8c;
+  }
+
+  80% {
+    box-shadow: 0 0 1px 0 #0c8aff5a;
   }
 
   100% {
@@ -133,3 +154,65 @@ main {
     transform: rotate(360deg);
   }
 }
+
+/** 2.5d block **/
+.block-outer {
+  --bg-dark: rgba(1, 112, 186, 1);
+  --bg-light: rgb(56 176 255 / 48%);
+  --white-fade: rgba(255, 255, 255, 0.42);
+
+  box-shadow: 0 0 0 1px rgb(12 138 255);
+  overflow: hidden;
+  position: relative;
+  /* transform: rotate(90deg); */
+  width: 100%;
+  height: 100%;
+}
+
+.block-outer::after {
+  animation: block-shimmer 4s ease-in-out infinite;
+  background: linear-gradient(
+    135deg,
+    transparent 30%,
+    var(--white-fade) 50%,
+    transparent 80%
+  ) no-repeat;
+  content: '';
+  height: 600%;
+  position: absolute;
+  top: 0;
+  width: 600%;
+  z-index: 2;
+}
+
+.block-inner {
+  background-color: rgb(12 138 255);
+  border: .5px solid #ffffff17;
+  display: grid;
+  height: calc(100% - 1px);
+  place-items: center;
+  width: calc(100% - 1px);
+}
+
+.block-inner::before {
+  background: linear-gradient(180deg, rgb(148 204 255 / 50%) 30%, transparent 65%);
+  content: '';
+  height: 85%;
+  top: 0;
+  position: absolute;
+  width: 100%;
+  z-index: 2;
+}
+
+@keyframes block-shimmer {
+  0% {
+     background-position: -250px -250px;
+  }
+  75% {
+     background-position: 0px 0px;
+  }
+  100% {
+     background-position: 0 0;
+  }
+}
+
