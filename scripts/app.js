@@ -1,7 +1,7 @@
 const MS = 125
 const INITIAL_DIRECTION = 'up'
-const COLUMNS = 35
-const ROWS = 35
+const COLUMNS = 25
+const ROWS = 25
 const CELLS = COLUMNS * ROWS
 const INITIAL_PLAYER = [
   (Math.floor(ROWS / 2) * COLUMNS - Math.ceil(COLUMNS / 2)) - COLUMNS,   // head
@@ -43,6 +43,7 @@ const draw = () => {
       const id = Number(cell.id)
 
       cell.classList.toggle('player', player.includes(id))
+      cell.classList.toggle('player--head', id === player[0])
       cell.classList.toggle('piece', id === state.piece)
       cell.classList.toggle('block-outer', id === state.piece)
       if (id === state.piece && !cell.querySelector('.block-inner')) {

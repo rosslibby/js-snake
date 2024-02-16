@@ -24,14 +24,14 @@ main {
 .wrapper {
   align-items: center;
   display: grid;
+  border-bottom-right-radius: 1px;
   border-left: 8px solid #0084ff;
   border-top: 8px solid #0c8aff;
   box-shadow: 12px 12px 0 4px #ff0c86;
-  width: calc(1.25rem * var(--columns) + 32px);
-  height: calc(1.25rem * var(--rows) + 34px);
-  border-bottom-right-radius: 1px;
+  height: calc(1.5rem * var(--rows) + 16px);
   justify-content: center;
   position: relative;
+  width: calc(1.5rem * var(--columns) + 18px);
 }
 
 .score {
@@ -49,14 +49,13 @@ main {
   border-bottom: 6px solid #ff369b61;
   border-right: 6px solid #ff369b61;
   display: grid;
-  height: calc(1.25rem * var(--rows));
+  height: calc(1.5rem * var(--rows));
   gap: 1px;
   grid-template-columns: repeat(var(--columns), 1fr);
   grid-template-rows: repeat(var(--rows), 1fr);
   overflow: hidden;
-  padding: 8px;
   position: relative;
-  width: calc(1.25rem * var(--columns));
+  width: calc(1.5rem * var(--columns));
 }
 
 .overlay {
@@ -97,21 +96,33 @@ main {
 
 .cell {
   background-color: var(--bg-color);
-  border-radius: 1px;
+  /* border-radius: 1px; */
   height: 100%;
   width: 100%;
 }
 
 .piece {
-  animation-name: piece-pulse;
-  animation-duration: 7s;
-  animation-iteration-count: infinite;
+  /* animation-name: piece-pulse;
+  animation-duration: 4s;
+  animation-iteration-count: infinite; */
   background-color: #0a8aff;
   z-index: 1;
 }
 
 .player {
-  background-color: #94ccff;
+  /* background-color: #94ccff; */
+  background-image: conic-gradient(from 0deg at 94%, #649acb 137deg 129deg, #4f7da6 133deg 270deg, #94ccff 270deg 360deg);
+  background-size: 201% 176%;
+  background-position: 100% 0;
+  clip-path: polygon(0 0, 88% 0, 100% 18%, 100% 100%, 10% 100%, 0 88%);
+  height: calc(100% + 2px);
+  margin-left: -1px;
+  margin-top: -1px;
+  width: calc(100% + 2px);
+}
+
+.player--head {
+  clip-path: polygon(0 0, 88% 0, 100% 18%, 100% 100%, 21% 100%, 0 88%);
 }
 
 .hidden {
@@ -120,53 +131,66 @@ main {
 
 @keyframes piece-pulse {
   0% {
-    box-shadow: 0 0 1px 0 #0c8aff5a;
-    transform: rotate(0deg);
+    box-shadow: 0 0 0 20px #0c8aff14;
+    outline: 20px solid transparent;
   }
 
-  10% {
-    transform: rotate(360deg);
+  24% {
+    outline: 20px solid transparent;
   }
 
-  20% {
-    box-shadow: 0 0 24px 4px #0c8aff8c;
-    transform: rotate(360deg);
+  25% {
+    outline: 20px solid #0c8aff14;
   }
 
-  30% {
-    transform: rotate(360deg);
-  }
-
-  40% {
-    box-shadow: 0 0 1px 0 #0c8aff5a;
-  }
-
-  60% {
-    box-shadow: 0 0 24px 4px #0c8aff8c;
-  }
-
-  80% {
-    box-shadow: 0 0 1px 0 #0c8aff5a;
+  50% {
+    box-shadow: 0 0 0 0 transparent;
+    outline: 0 solid transparent;
   }
 
   100% {
-    box-shadow: 0 0 1px 0 #0c8aff5a;
-    transform: rotate(360deg);
+    box-shadow: 0 0 0 0 transparent;
+    outline: 0 solid transparent;
   }
+  /* 0% {
+    box-shadow: 0 0 1px 0 transparent;
+  }
+
+  25% {
+    box-shadow: 0 0 16px 4px #0c8aff1c;
+  }
+
+  50% {
+    box-shadow: 0 0 1px 0 transparent;
+  }
+
+  75% {
+    box-shadow: 0 0 16px 4px #0c8aff1c;
+  }
+
+  100% {
+    box-shadow: 0 0 1px 0 transparent;
+  } */
 }
 
-/** 2.5d block **/
+/** glossy block **/
 .block-outer {
   --bg-dark: rgba(1, 112, 186, 1);
   --bg-light: rgb(56 176 255 / 48%);
   --white-fade: rgba(255, 255, 255, 0.42);
 
-  box-shadow: 0 0 0 1px rgb(12 138 255);
+  /* box-shadow: 0 0 0 1px rgb(12 138 255); */
   overflow: hidden;
   position: relative;
   /* transform: rotate(90deg); */
   width: 100%;
   height: 100%;
+
+  /* 2.5D */
+  background-image: conic-gradient(from 0deg at 94%, #0054a1 137deg 129deg, #003c74 133deg 270deg, #0084ff 270deg 360deg);
+  background-size: 201% 176%;
+  clip-path: polygon(0 0, 88% 0, 100% 18%, 100% 100%, 18% 100%, 0 88%);
+  background-position: 100% 0;
 }
 
 .block-outer::after {
@@ -186,8 +210,8 @@ main {
 }
 
 .block-inner {
-  background-color: rgb(12 138 255);
-  border: .5px solid #ffffff17;
+  /* background-color: rgb(12 138 255); */
+  /* border: .5px solid #ffffff17; */
   display: grid;
   height: calc(100% - 1px);
   place-items: center;
@@ -195,9 +219,9 @@ main {
 }
 
 .block-inner::before {
-  background: linear-gradient(180deg, rgb(148 204 255 / 50%) 30%, transparent 65%);
+  /* background: linear-gradient(167deg, rgb(255 255 255 / 18%) 40%, transparent 40%); */
   content: '';
-  height: 85%;
+  height: 100%;
   top: 0;
   position: absolute;
   width: 100%;
@@ -216,3 +240,29 @@ main {
   }
 }
 
+/** 2.5D block **/
+
+.cube-wrapper {
+  display: grid;
+  height: 600px;
+  margin: 40px auto;
+  place-items: center;
+}
+
+.cube {
+  --x: 0;
+  --y: 2;
+  --z: 3;
+  width: 250px;
+  height: 250px;
+  background-color: #f00;
+  background-image: conic-gradient(from -63.43deg at center, #fff4 0deg 126.86deg, #0004 126.86deg 243.43deg, #0000 243.43deg 360deg);
+  left: calc((var(--x) - var(--z)) * 50px);
+  top: calc((var(--x) + var(--z)) * 25px - var(--y) * 50px);
+  margin-left: -50px;
+  margin-top: -50px;
+  z-index: calc(var(--x) + var(--y) + var(--z));
+  /* clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); */
+  clip-path: polygon(0 0, 94% 0, 100% 12%, 100% 100%, 12% 100%, 0 94%);
+  transition: filter 200ms, scale 100ms, left 200ms, top 200ms, background-color 100ms;
+}
